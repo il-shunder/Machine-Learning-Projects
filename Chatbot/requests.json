@@ -1,5 +1,5 @@
 { 
-    "data": [
+    "requests": [
         {
             "tag": "greeting",
             "patterns": ["Hi", "Hello", "Hey", "Hola", "What's up", "How are you", "How is it going?", "Good day", "Nice to see you"],
@@ -64,11 +64,6 @@
             "tag": "compliment",
             "patterns": ["You're awesome", "You're amazing", "You're great", "You're the best", "You're fantastic", "You're wonderful", "You're incredible", "You're the greatest", "You're the best chatbot"],
             "responses": ["Thank you!", "You're too kind!", "You're making me blush!"]
-        },
-        {
-            "tag": "noanswer",
-            "patterns": [],
-            "responses": ["Sorry, can't understand you", "Please give me more info", "Not sure I understand"]
         }
     ] 
 }
