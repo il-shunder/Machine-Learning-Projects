@@ -1,0 +1,65 @@
+{
+    "intents": [
+        {
+            "tag": "greeting",
+            "patterns": [
+                "hi",
+                "hello",
+                "hey",
+                "hola",
+                "what's up",
+                "how are you",
+                "how is it going?",
+                "good day",
+                "nice to see you",
+                "good morning",
+                "good evening"
+            ],
+            "responses": [
+                "Hello! How can I assist you today?",
+                "Hi there! What can I do for you?",
+                "Hey! How can I help?"
+            ]
+        },
+        {
+            "tag": "get_time",
+            "patterns": ["what time is it", "tell me the time", "what's the time", "time"],
+            "responses": [""]
+        },
+        {
+            "tag": "add_todo",
+            "patterns": [
+                "add a todo",
+                "please add a new todo",
+                "i need to add something to my todo list",
+                "create a new todo",
+                "add this to my todo",
+                "add todo to my list",
+                "please add a todo item",
+                "todo"
+            ],
+            "responses": [""]
+        },
+        {
+            "tag": "speak_todo",
+            "patterns": ["show my todos", "what is in my todo list", "what are my todos"],
+            "responses": [""]
+        },
+        {
+            "tag": "exit",
+            "patterns": [
+                "bye",
+                "goodbye",
+                "see you later",
+                "goodbye for now",
+                "i'm going",
+                "have a good day",
+                "cao",
+                "see ya",
+                "take care",
+                "exit"
+            ],
+            "responses": [""]
+        }
+    ]
+}
