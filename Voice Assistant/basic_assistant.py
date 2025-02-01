@@ -1,4 +1,5 @@
 import json
+import os
 import random
 
 import nltk
@@ -6,100 +7,115 @@ import numpy as np
 from keras import layers, losses, models
 from nltk.stem import WordNetLemmatizer
 
-nltk.download("punkt")
-nltk.download("wordnet")
 
-MODEL_PATH = "chatbot_model.keras"
+class BasicAssistant:
+    MODEL_PATH = "basic_assistant.keras"
+    IGNORE_CHARACTERS = ["?", "!", ".", ","]
 
+    def __init__(self, intents_path: str, method_mappings: dict = {}):
+        nltk.download("punkt", quiet=True)
+        nltk.download("wordnet", quiet=True)
 
-lemmatizer = WordNetLemmatizer()
-data = json.loads(open("intents.json").read())
-words = []
-classes = []
-documents = []
-ignore_characters = ["?", "!", ".", ","]
+        self.words = []
+        self.intents = []
+        self.documents = []
+        self.training_data = []
 
-for item in data["intents"]:
-    for pattern in item["patterns"]:
-        word_list = nltk.word_tokenize(pattern)
-        word_list = [word.lower() for word in word_list]
-        words.extend(word_list)
-        documents.append((word_list, item["tag"]))
-        if item["tag"] not in classes:
-            classes.append(item["tag"])
+        if os.path.exists(intents_path):
+            self.intents_data = json.loads(open(intents_path).read())
+            self._process_intents_data()
+        else:
+            raise FileNotFoundError
 
-words = [lemmatizer.lemmatize(word) for word in words if word not in ignore_characters]
-words = sorted(set(words))
+        self.lemmatizer = WordNetLemmatizer()
+        self.model = self._load_model()
+        self.method_mappings = method_mappings
 
-try:
-    model = models.load_model(MODEL_PATH)
-except ValueError:
-    training = []
-    output_empty = [0] * len(classes)
+    def _process_intents_data(self):
+        for item in self.intents_data["intents"]:
+            if item["tag"] not in self.intents:
+                self.intents.append(item["tag"])
 
-    for document in documents:
-        bag = []
-        word_patterns = document[0]
-        word_patterns = [lemmatizer.lemmatize(word) for word in word_patterns]
-        for word in words:
-            bag.append(1) if word in word_patterns else bag.append(0)
+            for pattern in item["patterns"]:
+                pattern_words = nltk.word_tokenize(pattern)
+                pattern_words = [word.lower() for word in pattern_words]
+                self.words.extend(pattern_words)
+                self.documents.append((pattern_words, item["tag"]))
 
-        output_row = list(output_empty)
-        output_row[classes.index(document[1])] = 1
-        training.append([bag, output_row])
+        self.words = [self.lemmatizer.lemmatize(word) for word in self.words if word not in self.IGNORE_CHARACTERS]
+        self.words = sorted(set(self.words))
 
-    random.shuffle(training)
-    training = np.array(training, dtype="object")
+    def _load_model(self):
+        try:
+            model = models.load_model(self.MODEL_PATH)
+        except ValueError:
+            train_x, train_y = self._get_training_data()
 
-    train_x = list(training[:, 0])
-    train_y = list(training[:, 1])
+            model = models.Sequential(
+                [
+                    layers.Input(shape=(len(train_x[0]),)),
+                    layers.Dense(128, activation="relu"),
+                    layers.Dropout(0.5),
+                    layers.Dense(64, activation="relu"),
+                    layers.Dropout(0.5),
+                    layers.Dense(len(train_y[0]), activation="linear"),
+                ]
+            )
 
-    model = models.Sequential(
-        [
-            layers.Input(shape=(len(train_x[0]),)),
-            layers.Dense(128, activation="relu"),
-            layers.Dropout(0.5),
-            layers.Dense(64, activation="relu"),
-            layers.Dropout(0.5),
-            layers.Dense(len(train_y[0]), activation="linear"),
-        ]
-    )
+            model.compile(optimizer="adam", loss=losses.CategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
+            model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=5, verbose=1)
+            model.save(self.MODEL_PATH)
+        finally:
+            return model
 
-    model.compile(optimizer="adam", loss=losses.CategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
-    model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=8, verbose=1)
-    model.save(MODEL_PATH)
-finally:
-    if model:
+    def _get_training_data(self):
+        empty_output = [0] * len(self.intents)
 
-        def clean_up_sentence(sentence):
-            sentence_words = nltk.word_tokenize(sentence)
-            sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
-            return sentence_words
+        for document in self.documents:
+            bag = []
+            word_patterns = document[0]
+            word_patterns = [self.lemmatizer.lemmatize(word) for word in word_patterns]
+            for word in self.words:
+                bag.append(1) if word in word_patterns else bag.append(0)
 
-        def bag_of_words(sentence):
-            sentence_words = clean_up_sentence(sentence)
-            bag = [0] * len(words)
-            for w in sentence_words:
-                for i, word in enumerate(words):
-                    if word == w:
-                        bag[i] = 1
-            return np.array(bag)
+            row_output = list(empty_output)
+            row_output[self.intents.index(document[1])] = 1
+            self.training_data.append([bag, row_output])
 
-        def predict_class(sentence):
-            bow = bag_of_words(sentence)
-            prediction = model.predict(np.array([bow]))[0]
-            index = np.argmax(prediction)
-            return classes[index]
+        random.shuffle(self.training_data)
+        self.training_data = np.array(self.training_data, dtype="object")
 
-        def get_response(predicted_class, data_json):
-            for item in data_json["intents"]:
-                if item["tag"] == predicted_class:
-                    result = random.choice(item["responses"])
-                    break
-            return result
+        train_x = list(self.training_data[:, 0])
+        train_y = list(self.training_data[:, 1])
 
-        while True:
-            message = input("Enter your message: ")
-            prediction = predict_class(message)
-            result = get_response(prediction, data)
-            print(result)
+        return train_x, train_y
+
+    def _predict_intent(self, sentence: str):
+        sentence_words = nltk.word_tokenize(sentence)
+        sentence_words = [self.lemmatizer.lemmatize(word.lower()) for word in sentence_words]
+        bag_of_words = [0] * len(self.words)
+
+        for w in sentence_words:
+            for i, word in enumerate(self.words):
+                if word == w:
+                    bag_of_words[i] = 1
+
+        bag_of_words = np.array([bag_of_words])
+
+        prediction = self.model.predict(bag_of_words, verbose=0)[0]
+        index = np.argmax(prediction)
+
+        return self.intents[index]
+
+    def get_response(self, sentence: str):
+        predicted_intent = self._predict_intent(sentence)
+
+        try:
+            if predicted_intent in self.method_mappings:
+                return self.method_mappings[predicted_intent]()
+
+            for intent in self.intents_data["intents"]:
+                if intent["tag"] == predicted_intent:
+                    return random.choice(intent["responses"])
+        except IndexError:
+            return "Sorry, I don't understand you. Please try again."
