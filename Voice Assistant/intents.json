@@ -30,13 +30,10 @@
             "tag": "add_todo",
             "patterns": [
                 "add a todo",
-                "please add a new todo",
-                "i need to add something to my todo list",
-                "create a new todo",
-                "add this to my todo",
-                "add todo to my list",
-                "please add a todo item",
-                "todo"
+                "I want to add a todo",
+                "add a new todo",
+                "add a todo to my list",
+                "new item on my todo list"
             ],
             "responses": [""]
         },

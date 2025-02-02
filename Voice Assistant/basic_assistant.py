@@ -16,6 +16,8 @@ class BasicAssistant:
         nltk.download("punkt", quiet=True)
         nltk.download("wordnet", quiet=True)
 
+        self.lemmatizer = WordNetLemmatizer()
+
         self.words = []
         self.intents = []
         self.documents = []
@@ -27,7 +29,6 @@ class BasicAssistant:
         else:
             raise FileNotFoundError
 
-        self.lemmatizer = WordNetLemmatizer()
         self.model = self._load_model()
         self.method_mappings = method_mappings
 
@@ -117,5 +118,6 @@ class BasicAssistant:
             for intent in self.intents_data["intents"]:
                 if intent["tag"] == predicted_intent:
                     return random.choice(intent["responses"])
+            return "Sorry, I don't understand you. Please try again."
         except IndexError:
             return "Sorry, I don't understand you. Please try again."
