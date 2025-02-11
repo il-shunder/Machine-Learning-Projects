@@ -1,8 +1,11 @@
 import sys
+import threading
+import tkinter as tk
 from datetime import datetime
 
 import pyttsx3 as tts
 import speech_recognition
+
 from basic_assistant import BasicAssistant
 
 
@@ -24,6 +27,37 @@ class VoiceAssistant:
         }
 
         self.basic_assistant = BasicAssistant(self.INTENTS_PATH, self.mappings)
+
+        self.window = tk.Tk()
+        self.label = tk.Label(text="𖠌", font=("Arial", 120, "bold"))
+        self.label.config(fg="black")
+        self.label.pack()
+
+        threading.Thread(target=self.run_assistant).start()
+
+        self.window.mainloop()
+
+    def run_assistant(self):
+        while True:
+            try:
+                with speech_recognition.Microphone() as microphone:
+                    self.recognizer.adjust_for_ambient_noise(microphone, duration=0.2)
+                    audio = self.recognizer.listen(microphone)
+                    sentence = self.recognizer.recognize_google(audio)
+                    sentence = sentence.lower()
+
+                    if "hey assistant" in sentence:
+                        self.label.config(fg="green")
+                        audio = self.recognizer.listen(microphone)
+                        sentence = self.recognizer.recognize_google(audio)
+                        sentence = sentence.lower()
+                        if sentence is not None:
+                            response = self.basic_assistant.get_response(sentence)
+                            if isinstance(response, str):
+                                self.speaker.say(response)
+                                self.speaker.runAndWait()
+            except:
+                continue
 
     def get_time(self):
         current_time = datetime.now().strftime("%I:%M %p")
@@ -67,3 +101,6 @@ class VoiceAssistant:
         self.speaker.say("Bye")
         self.speaker.runAndWait()
         sys.exit(0)
+
+
+VoiceAssistant()
