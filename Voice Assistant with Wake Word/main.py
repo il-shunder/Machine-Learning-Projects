@@ -1,6 +1,4 @@
 import sys
-import threading
-import tkinter as tk
 from datetime import datetime
 
 import pyttsx3 as tts
@@ -28,16 +26,8 @@ class VoiceAssistant:
 
         self.basic_assistant = BasicAssistant(self.INTENTS_PATH, self.mappings)
 
-        self.window = tk.Tk()
-        self.label = tk.Label(text="𖠌", font=("Arial", 120, "bold"))
-        self.label.config(fg="black")
-        self.label.pack()
-
-        threading.Thread(target=self.run_assistant).start()
-
-        self.window.mainloop()
-
     def run_assistant(self):
+        is_awake = False
         while True:
             try:
                 with speech_recognition.Microphone() as microphone:
@@ -45,17 +35,19 @@ class VoiceAssistant:
                     audio = self.recognizer.listen(microphone)
                     sentence = self.recognizer.recognize_google(audio)
                     sentence = sentence.lower()
+                    response = None
 
-                    if "hey assistant" in sentence:
-                        self.label.config(fg="green")
-                        audio = self.recognizer.listen(microphone)
-                        sentence = self.recognizer.recognize_google(audio)
-                        sentence = sentence.lower()
-                        if sentence is not None:
+                    if sentence is not None:
+                        if not is_awake:
+                            if "hey assistant" in sentence:
+                                is_awake = True
+                                response = self.basic_assistant.get_response(sentence)
+                        else:
                             response = self.basic_assistant.get_response(sentence)
-                            if isinstance(response, str):
-                                self.speaker.say(response)
-                                self.speaker.runAndWait()
+
+                        if isinstance(response, str):
+                            self.speaker.say(response)
+                            self.speaker.runAndWait()
             except:
                 continue
 
@@ -65,8 +57,6 @@ class VoiceAssistant:
         self.speaker.runAndWait()
 
     def add_todo(self):
-        global recognizer
-
         added = False
         self.speaker.say("What do you want to add to the to do list?")
         self.speaker.runAndWait()
@@ -74,9 +64,9 @@ class VoiceAssistant:
         while not added:
             try:
                 with speech_recognition.Microphone() as microphone:
-                    recognizer.adjust_for_ambient_noise(microphone, duration=0.2)
-                    audio = recognizer.listen(microphone)
-                    todo_text = recognizer.recognize_google(audio)
+                    self.recognizer.adjust_for_ambient_noise(microphone, duration=0.2)
+                    audio = self.recognizer.listen(microphone)
+                    todo_text = self.recognizer.recognize_google(audio)
 
                     with open(self.TODO_PATH, "a") as file:
                         file.write(todo_text + "\n")
@@ -103,4 +93,5 @@ class VoiceAssistant:
         sys.exit(0)
 
 
-VoiceAssistant()
+voice_assistant = VoiceAssistant()
+voice_assistant.run_assistant()
