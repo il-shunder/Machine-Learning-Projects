@@ -69,4 +69,6 @@ except ValueError:
     model.save(MODEL_PATH)
 finally:
     if model:
-        print()
+
+        def predict_next_word():
+            pass
