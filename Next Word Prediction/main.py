@@ -1,4 +1,5 @@
 import os
+import random
 
 import numpy as np
 import pandas as pd
@@ -23,17 +24,17 @@ df = pd.read_csv(DATASET_FILE)
 text = list(df["text"].values)
 text = " ".join(text)
 
-train_text = text[:10000].lower()
+train_text = text[:300000].lower()
 
 tokenizer = RegexpTokenizer(r"\w+")
 tokens = tokenizer.tokenize(train_text)
 
 unique_tokens = np.unique(tokens)
+words = {name: i for i, name in enumerate(unique_tokens)}
 
 try:
     model = models.load_model(MODEL_PATH)
 except ValueError:
-    words = {name: i for i, name in enumerate(unique_tokens)}
     input_words = []
     next_words = []
 
@@ -70,5 +71,20 @@ except ValueError:
 finally:
     if model:
 
-        def predict_next_word():
-            pass
+        def predict_next_word(input_text, n_best):
+            input_tokens = tokenizer.tokenize(input_text.lower())
+            if len(input_tokens) == NUMBER_OF_WORDS:
+                x_test = np.zeros((1, NUMBER_OF_WORDS, len(unique_tokens)))
+                for i in range(NUMBER_OF_WORDS):
+                    if input_tokens[i] in words:
+                        index = words[input_tokens[i]]
+                    else:
+                        index = random.randint(0, len(words))
+                    x_test[0, i, index] = 1
+                predictions = model.predict(x_test)[0]
+                predictions = np.argpartition(predictions, -n_best)[-n_best:]
+                print([unique_tokens[i] for i in predictions])
+            else:
+                print(f"Input text must contain exactly {NUMBER_OF_WORDS} words")
+
+        predict_next_word("He see the problem and decide to go there to", 5)
