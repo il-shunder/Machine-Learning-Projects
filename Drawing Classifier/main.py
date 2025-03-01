@@ -28,7 +28,7 @@ class DrawingClassifier:
         self.init_gui()
 
     def init_gui(self):
-        self.canvas = tk.Canvas(self.root, width=self.CANVAS_WIDTH - 10, height=self.CANVAS_HEIGHT - 10, bg="red")
+        self.canvas = tk.Canvas(self.root, width=self.CANVAS_WIDTH - 10, height=self.CANVAS_HEIGHT - 10, bg="white")
         self.canvas.pack(expand=YES, fill=BOTH)
         self.canvas.bind("<B1-Motion>", self.paint)
 
@@ -56,9 +56,12 @@ class DrawingClassifier:
     def paint(self, event):
         x1, y1 = (event.x - 1), (event.y - 1)
         x2, y2 = (event.x + 1), (event.y + 1)
-        self.canvas.create_rectangle(x1, y1, x2, y2, fill="black", width=self.BRUSH_WIDTH)
+        self.canvas.create_rectangle(x1, y1, x2, y2, fill="black", outline="black", width=self.BRUSH_WIDTH)
         self.draw.rectangle(
-            [x1, y2, x2 + self.BRUSH_WIDTH, y2 + self.BRUSH_WIDTH], fill="black", width=self.BRUSH_WIDTH
+            [x1, y2, x2 + self.BRUSH_WIDTH, y2 + self.BRUSH_WIDTH],
+            fill="black",
+            outline="black",
+            width=self.BRUSH_WIDTH,
         )
 
     def save_for_class(self, index):
