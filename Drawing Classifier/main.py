@@ -1,5 +1,6 @@
+import os
 import tkinter as tk
-from tkinter import BOTH, YES, simpledialog
+from tkinter import simpledialog
 
 import PIL
 import PIL.Image
@@ -10,8 +11,9 @@ class DrawingClassifier:
     CANVAS_WIDTH = 500
     CANVAS_HEIGHT = 500
     N_CLASSES = 3
-    BRUSH_WIDTH = 10
-    WHITE = (255, 255, 255)
+    BRUSH_WIDTH = 15
+    TEMP_IMAGE = "image.png"
+    TRAIN_IMAGE_SIZE = (50, 50)
 
     def __init__(self, root=tk.Tk(), root_title="Drawing Classifier"):
         self.root = root
@@ -23,31 +25,53 @@ class DrawingClassifier:
         self.counters = [0] * self.N_CLASSES
 
         self.modal = None
-        self.image1, self.draw = None, None
+        self.image, self.draw = None, None
 
         self.init_gui()
 
     def init_gui(self):
         self.canvas = tk.Canvas(self.root, width=self.CANVAS_WIDTH - 10, height=self.CANVAS_HEIGHT - 10, bg="white")
-        self.canvas.pack(expand=YES, fill=BOTH)
+        self.canvas.pack(expand=tk.YES, fill=tk.BOTH)
         self.canvas.bind("<B1-Motion>", self.paint)
 
-        self.image1 = PIL.Image.new("RGB", (self.CANVAS_WIDTH, self.CANVAS_HEIGHT), self.WHITE)
-        self.draw = PIL.ImageDraw.Draw(self.image1)
+        self.image = PIL.Image.new("RGB", (self.CANVAS_WIDTH, self.CANVAS_HEIGHT), (255, 255, 255))
+        self.draw = PIL.ImageDraw.Draw(self.image)
 
         for i in range(self.N_CLASSES):
             self.classes[i] = simpledialog.askstring(
                 "Classname", f"Enter the name of the {i + 1} class:", parent=self.root
             )
 
+        btn_frame = tk.Frame(self.root)
+        btn_frame.pack(fill=tk.X, side=tk.BOTTOM)
+
+        btn_frame.columnconfigure(0, weight=1)
+        btn_frame.columnconfigure(1, weight=1)
+        btn_frame.columnconfigure(2, weight=1)
+
         for i in range(self.N_CLASSES):
             self.btns_for_classes[i] = tk.Button(
-                self.root,
+                btn_frame,
                 text=self.classes[i],
-                width=50,
-                command=lambda index=i: self.save_for_class(index),
+                command=lambda index=i: self.save_image(index),
             )
-            self.btns_for_classes[i].pack(anchor=tk.CENTER, expand=True)
+            self.btns_for_classes[i].grid(row=0, column=i, sticky=tk.NSEW)
+
+        change_btn = tk.Button(btn_frame, text="Change Model", command=self.change_model)
+        change_btn.grid(row=1, column=0, sticky=tk.NSEW)
+
+        train_btn = tk.Button(btn_frame, text="Train Model", command=self.train_model)
+        train_btn.grid(row=1, column=1, sticky=tk.NSEW)
+
+        clear_btn = tk.Button(btn_frame, text="Clear", command=self.clear)
+        clear_btn.grid(row=1, column=2, sticky=tk.NSEW)
+
+        predict_btn = tk.Button(btn_frame, text="Predict", command=self.predict)
+        predict_btn.grid(row=2, columnspan=3, sticky=tk.NSEW)
+
+        self.status_label = tk.Label(btn_frame, text=f"Current Model: {type(self.modal).__name__}")
+        self.status_label.config(font=("Arial", 20))
+        self.status_label.grid(row=4, column=1, sticky=tk.NSEW)
 
         # self.root.protocol("WM_DELETE_WINDOW", self.on_delete)
         self.root.attributes("-topmost", True)
@@ -64,8 +88,35 @@ class DrawingClassifier:
             width=self.BRUSH_WIDTH,
         )
 
-    def save_for_class(self, index):
-        print(f"Save for class: {self.classes[index]}")
+    def save_image(self, index):
+        if not os.path.isdir(str(index)):
+            os.mkdir(str(index))
+
+        self.image.save(self.TEMP_IMAGE)
+
+        filepath = f"{index}/image{self.counters[index]}.png"
+        img = PIL.Image.open(self.TEMP_IMAGE)
+        img.thumbnail(self.TRAIN_IMAGE_SIZE, PIL.Image.Resampling.LANCZOS)
+        img.save(filepath)
+
+        if os.path.isfile(self.TEMP_IMAGE):
+            os.remove(self.TEMP_IMAGE)
+
+        self.counters[index] += 1
+        self.clear()
+
+    def clear(self):
+        self.canvas.delete("all")
+        self.draw.rectangle([0, 0, 1000, 1000], fill="white", outline="white")
+
+    def train_model(self):
+        pass
+
+    def change_model(self):
+        pass
+
+    def predict(self):
+        pass
 
     def on_delete(self):
         pass
