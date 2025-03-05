@@ -1,4 +1,6 @@
+import math
 import os
+import random
 import tkinter as tk
 from tkinter import simpledialog, ttk
 
@@ -20,8 +22,10 @@ class DrawingClassifier:
     CANVAS_HEIGHT = 500
     N_CLASSES = 3
     BRUSH_WIDTH = 15
+    AUGMENTATIONS_PER_IMAGE = 20
     TEMP_IMAGE_PATH = "image.png"
     TRAIN_IMAGE_SIZE = (50, 50)
+    BG_COLOR = (255, 255, 255)
 
     def __init__(self, root=tk.Tk(), root_title="Drawing Classifier"):
         self.root = root
@@ -50,7 +54,7 @@ class DrawingClassifier:
         self.canvas.pack()
         self.canvas.bind("<B1-Motion>", self.paint)
 
-        self.image = PIL.Image.new("RGB", (self.CANVAS_WIDTH, self.CANVAS_HEIGHT), (255, 255, 255))
+        self.image = PIL.Image.new("RGB", (self.CANVAS_WIDTH, self.CANVAS_HEIGHT), self.BG_COLOR)
         self.draw = PIL.ImageDraw.Draw(self.image)
 
         for i in range(self.N_CLASSES):
@@ -73,19 +77,22 @@ class DrawingClassifier:
             )
             self.btns_for_classes[i].grid(row=0, column=i, sticky=tk.NSEW)
 
+        augmentation_btn = tk.Button(btn_frame, text="Data Augmentation", command=self.data_augmentation)
+        augmentation_btn.grid(row=1, columnspan=3, sticky=tk.NSEW)
+
         self.model_dropdown = ttk.Combobox(btn_frame, state="readonly", values=self.model_options)
         self.model_dropdown.current(0)
-        self.model_dropdown.grid(row=1, column=0, sticky=tk.NSEW)
+        self.model_dropdown.grid(row=2, column=0, sticky=tk.NSEW)
         self.model_dropdown.bind("<<ComboboxSelected>>", self.change_model)
 
         train_btn = tk.Button(btn_frame, text="Train Model", command=self.train_model)
-        train_btn.grid(row=1, column=1, sticky=tk.NSEW)
+        train_btn.grid(row=2, column=1, sticky=tk.NSEW)
 
         clear_btn = tk.Button(btn_frame, text="Clear", command=self.clear)
-        clear_btn.grid(row=1, column=2, sticky=tk.NSEW)
+        clear_btn.grid(row=2, column=2, sticky=tk.NSEW)
 
         predict_btn = tk.Button(btn_frame, text="Predict", command=self.predict)
-        predict_btn.grid(row=2, columnspan=3, sticky=tk.NSEW)
+        predict_btn.grid(row=3, columnspan=3, sticky=tk.NSEW)
 
         self.predicted_class = tk.Label(btn_frame, text="There is no predicted class")
         self.predicted_class.config(font=("Arial", 20))
@@ -194,6 +201,38 @@ class DrawingClassifier:
                     if os.path.isfile(file_path):
                         os.remove(file_path)
                 os.rmdir(dir)
+
+    def data_augmentation(self):
+        n_training_examples = sum(self.counters)
+
+        if n_training_examples > 0:
+            h_move = math.ceil(self.TRAIN_IMAGE_SIZE[0] / 5)
+            v_move = math.ceil(self.TRAIN_IMAGE_SIZE[1] / 5)
+            w_zoom = self.TRAIN_IMAGE_SIZE[0] / 2
+            h_zoom = self.TRAIN_IMAGE_SIZE[1] / 2
+
+            for i in range(len(self.counters)):
+                counter = self.counters[i]
+                for j in range(self.counters[i]):
+                    for a in range(self.AUGMENTATIONS_PER_IMAGE):
+                        filepath = f"{i}/image{counter}.png"
+                        img = PIL.Image.open(f"{i}/image{j}.png")
+                        img = self.zoom_image(img, w_zoom, h_zoom, random.uniform(1.0, 1.4))
+                        img = self.move_image(
+                            img, (random.randrange(-h_move, h_move), random.randrange(-v_move, v_move))
+                        )
+                        img.save(filepath)
+                        counter += 1
+                self.counters[i] = counter
+
+    def move_image(self, img, translate):
+        return img.rotate(0, translate=(translate), fillcolor=self.BG_COLOR)
+
+    def zoom_image(self, img, x, y, zoom):
+        w, h = img.size
+        zoom2 = zoom * 2
+        img = img.crop((x - w / zoom2, y - h / zoom2, x + w / zoom2, y + h / zoom2))
+        return img.resize((w, h), PIL.Image.Resampling.LANCZOS)
 
 
 DrawingClassifier()
