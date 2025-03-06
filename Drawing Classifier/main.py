@@ -36,6 +36,8 @@ class DrawingClassifier:
 
         self.counters = [0] * self.N_CLASSES
 
+        self.is_training_allowed = False
+
         self.model = LinearSVC()
         self.model_options = [
             type(self.model).__name__,
@@ -69,34 +71,65 @@ class DrawingClassifier:
         btn_frame.grid_columnconfigure(1, weight=1, uniform="buttons")
         btn_frame.grid_columnconfigure(2, weight=1, uniform="buttons")
 
+        self.classes_label = tk.Label(
+            btn_frame,
+            text="Use the below buttons to provide at least one drawing for each class",
+            wraplength=self.CANVAS_WIDTH,
+        )
+        self.classes_label.config(font=("Arial", 15))
+        self.classes_label.grid(row=0, columnspan=3, sticky=tk.NSEW)
+
         for i in range(self.N_CLASSES):
             self.btns_for_classes[i] = tk.Button(
                 btn_frame,
                 text=self.classes[i],
                 command=lambda index=i: self.save_image(index),
             )
-            self.btns_for_classes[i].grid(row=0, column=i, sticky=tk.NSEW)
+            self.btns_for_classes[i].grid(row=1, column=i, sticky=tk.NSEW)
 
-        augmentation_btn = tk.Button(btn_frame, text="Data Augmentation", command=self.data_augmentation)
-        augmentation_btn.grid(row=1, columnspan=3, sticky=tk.NSEW)
+        self.augmentation_label = tk.Label(
+            btn_frame,
+            text=f"Data Augmentation will create {self.AUGMENTATIONS_PER_IMAGE} new examples for each training example, even those that were created by augmentation before",
+            wraplength=self.CANVAS_WIDTH,
+        )
+        self.augmentation_label.config(font=("Arial", 15))
+        self.augmentation_label.grid(row=2, columnspan=3, sticky=tk.NSEW, pady=(10, 0))
+
+        self.augmentation_btn = tk.Button(btn_frame, text="Data Augmentation", command=self.data_augmentation)
+        self.augmentation_btn.grid(row=3, columnspan=3, sticky=tk.NSEW)
+        self.disable_element(self.augmentation_btn)
+
+        self.train_label = tk.Label(
+            btn_frame, text="Here you can select and train the model, or clear the canvas", wraplength=self.CANVAS_WIDTH
+        )
+        self.train_label.config(font=("Arial", 15))
+        self.train_label.grid(row=4, columnspan=3, sticky=tk.NSEW, pady=(10, 0))
 
         self.model_dropdown = ttk.Combobox(btn_frame, state="readonly", values=self.model_options)
         self.model_dropdown.current(0)
-        self.model_dropdown.grid(row=2, column=0, sticky=tk.NSEW)
+        self.model_dropdown.grid(row=5, column=0, sticky=tk.NSEW)
         self.model_dropdown.bind("<<ComboboxSelected>>", self.change_model)
 
-        train_btn = tk.Button(btn_frame, text="Train Model", command=self.train_model)
-        train_btn.grid(row=2, column=1, sticky=tk.NSEW)
+        self.train_btn = tk.Button(btn_frame, text="Train Model", command=self.train_model)
+        self.train_btn.grid(row=5, column=1, sticky=tk.NSEW)
+        self.disable_element(self.train_btn)
 
-        clear_btn = tk.Button(btn_frame, text="Clear", command=self.clear)
-        clear_btn.grid(row=2, column=2, sticky=tk.NSEW)
+        self.clear_btn = tk.Button(btn_frame, text="Clear", command=self.clear)
+        self.clear_btn.grid(row=5, column=2, sticky=tk.NSEW)
 
-        predict_btn = tk.Button(btn_frame, text="Predict", command=self.predict)
-        predict_btn.grid(row=3, columnspan=3, sticky=tk.NSEW)
+        self.predict_label = tk.Label(
+            btn_frame, text="To make predictions first you need to train the model", wraplength=self.CANVAS_WIDTH
+        )
+        self.predict_label.config(font=("Arial", 15))
+        self.predict_label.grid(row=6, columnspan=3, sticky=tk.NSEW, pady=(10, 0))
 
-        self.predicted_class = tk.Label(btn_frame, text="There is no predicted class")
+        self.predict_btn = tk.Button(btn_frame, text="Predict", command=self.predict)
+        self.predict_btn.grid(row=7, columnspan=3, sticky=tk.NSEW)
+        self.disable_element(self.predict_btn)
+
+        self.predicted_class = tk.Label(btn_frame, text="There is no predicted class", wraplength=self.CANVAS_WIDTH)
         self.predicted_class.config(font=("Arial", 20))
-        self.predicted_class.grid(row=4, columnspan=3, sticky=tk.NSEW)
+        self.predicted_class.grid(row=8, columnspan=3, sticky=tk.NSEW, pady=(0, 10))
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_delete)
         self.root.attributes("-topmost", True)
@@ -125,7 +158,16 @@ class DrawingClassifier:
         img.save(filepath)
 
         self.counters[index] += 1
+        if not self.is_training_allowed:
+            self.check_training_data()
         self.clear()
+
+    def check_training_data(self):
+        counters = [counter for counter in self.counters if counter > 0]
+        if len(counters) == self.N_CLASSES:
+            self.enable_element(self.augmentation_btn)
+            self.enable_element(self.train_btn)
+            self.is_training_allowed = True
 
     def clear(self):
         self.canvas.delete("all")
@@ -135,6 +177,7 @@ class DrawingClassifier:
         X_train, y_train = self.get_training_data()
         self.model.fit(X_train, y_train)
         print("Model successfully trained!")
+        self.enable_element(self.predict_btn)
 
     def get_training_data(self):
         img_list = class_list = np.array([])
@@ -167,6 +210,8 @@ class DrawingClassifier:
             self.set_model(DecisionTreeClassifier())
         else:
             self.set_model(LinearSVC())
+
+        self.disable_element(self.predict_btn)
 
     def set_model(self, model):
         self.model = model
@@ -201,6 +246,12 @@ class DrawingClassifier:
                     if os.path.isfile(file_path):
                         os.remove(file_path)
                 os.rmdir(dir)
+
+    def disable_element(self, element):
+        element.config(state=tk.DISABLED)
+
+    def enable_element(self, element):
+        element.config(state=tk.NORMAL)
 
     def data_augmentation(self):
         n_training_examples = sum(self.counters)
