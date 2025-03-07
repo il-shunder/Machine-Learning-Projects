@@ -9,6 +9,8 @@ import numpy as np
 import PIL
 import PIL.Image
 import PIL.ImageDraw
+import tensorflow as tf
+from keras import layers, losses, models
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
@@ -41,6 +43,7 @@ class DrawingClassifier:
         self.model = LinearSVC()
         self.model_options = [
             type(self.model).__name__,
+            type(models.Sequential()).__name__,
             type(RandomForestClassifier()).__name__,
             type(LogisticRegression()).__name__,
             type(GaussianNB()).__name__,
@@ -208,6 +211,22 @@ class DrawingClassifier:
             self.set_model(KNeighborsClassifier())
         elif dropdown == "DecisionTreeClassifier":
             self.set_model(DecisionTreeClassifier())
+        elif dropdown == "Sequential":
+            self.set_model(
+                models.Sequential(
+                    [
+                        layers.Conv2D(32, (3, 3), activation="relu"),
+                        layers.MaxPooling2D((2, 2)),
+                        layers.Conv2D(64, (3, 3), activation="relu"),
+                        layers.MaxPooling2D((2, 2)),
+                        layers.Conv2D(64, (3, 3), activation="relu"),
+                        layers.MaxPooling2D((2, 2)),
+                        layers.Flatten(),
+                        layers.Dense(64, activation="relu"),
+                        layers.Dense(self.N_CLASSES, activation="linear"),
+                    ]
+                )
+            )
         else:
             self.set_model(LinearSVC())
 
