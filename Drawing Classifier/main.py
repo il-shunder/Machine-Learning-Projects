@@ -28,6 +28,7 @@ class DrawingClassifier:
     TEMP_IMAGE_PATH = "image.png"
     TRAIN_IMAGE_SIZE = (50, 50)
     BG_COLOR = (255, 255, 255)
+    CNN = "Convolutional Neural Network"
 
     def __init__(self, root=tk.Tk(), root_title="Drawing Classifier"):
         self.root = root
@@ -39,11 +40,12 @@ class DrawingClassifier:
         self.counters = [0] * self.N_CLASSES
 
         self.is_training_allowed = False
+        self.is_prediction_allowed = False
 
-        self.model = LinearSVC()
+        self.model = self.createCNN()
         self.model_options = [
-            type(self.model).__name__,
-            type(models.Sequential()).__name__,
+            self.CNN,
+            type(LinearSVC()).__name__,
             type(RandomForestClassifier()).__name__,
             type(LogisticRegression()).__name__,
             type(GaussianNB()).__name__,
@@ -53,6 +55,23 @@ class DrawingClassifier:
         self.image, self.draw = None, None
 
         self.init_gui()
+
+    def createCNN(self):
+        model = models.Sequential(
+            [
+                layers.Conv2D(32, (3, 3), activation="relu"),
+                layers.MaxPooling2D((2, 2)),
+                layers.Conv2D(64, (3, 3), activation="relu"),
+                layers.MaxPooling2D((2, 2)),
+                layers.Conv2D(64, (3, 3), activation="relu"),
+                layers.MaxPooling2D((2, 2)),
+                layers.Flatten(),
+                layers.Dense(64, activation="relu"),
+                layers.Dense(self.N_CLASSES, activation="linear"),
+            ]
+        )
+
+        return model
 
     def init_gui(self):
         self.canvas = tk.Canvas(self.root, width=self.CANVAS_WIDTH - 10, height=self.CANVAS_HEIGHT - 10, bg="white")
@@ -177,9 +196,21 @@ class DrawingClassifier:
         self.draw.rectangle([0, 0, 1000, 1000], fill="white", outline="white")
 
     def train_model(self):
+        self.disable_element(self.predict_btn)
         X_train, y_train = self.get_training_data()
-        self.model.fit(X_train, y_train)
+        if self.model_dropdown.get() == self.CNN:
+            self.model.compile(
+                optimizer="adam",
+                loss=losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=["accuracy"],
+            )
+            X_train = X_train.reshape(sum(self.counters), self.TRAIN_IMAGE_SIZE[0], self.TRAIN_IMAGE_SIZE[1], 1)
+            self.model.fit(X_train, y_train, epochs=10, verbose=1)
+        else:
+            self.model.fit(X_train, y_train)
         print("Model successfully trained!")
+        if not self.is_prediction_allowed:
+            self.is_prediction_allowed = True
         self.enable_element(self.predict_btn)
 
     def get_training_data(self):
@@ -201,7 +232,9 @@ class DrawingClassifier:
     def change_model(self, dropdown):
         dropdown = self.model_dropdown.get()
 
-        if dropdown == "RandomForestClassifier":
+        if dropdown == "LinearSVC":
+            self.set_model(LinearSVC())
+        elif dropdown == "RandomForestClassifier":
             self.set_model(RandomForestClassifier())
         elif dropdown == "LogisticRegression":
             self.set_model(LogisticRegression())
@@ -211,24 +244,8 @@ class DrawingClassifier:
             self.set_model(KNeighborsClassifier())
         elif dropdown == "DecisionTreeClassifier":
             self.set_model(DecisionTreeClassifier())
-        elif dropdown == "Sequential":
-            self.set_model(
-                models.Sequential(
-                    [
-                        layers.Conv2D(32, (3, 3), activation="relu"),
-                        layers.MaxPooling2D((2, 2)),
-                        layers.Conv2D(64, (3, 3), activation="relu"),
-                        layers.MaxPooling2D((2, 2)),
-                        layers.Conv2D(64, (3, 3), activation="relu"),
-                        layers.MaxPooling2D((2, 2)),
-                        layers.Flatten(),
-                        layers.Dense(64, activation="relu"),
-                        layers.Dense(self.N_CLASSES, activation="linear"),
-                    ]
-                )
-            )
         else:
-            self.set_model(LinearSVC())
+            self.set_model(self.createCNN())
 
         self.disable_element(self.predict_btn)
 
@@ -243,9 +260,16 @@ class DrawingClassifier:
 
         img = cv.imread(self.TEMP_IMAGE_PATH)[:, :, 0]
         img = img.reshape(self.TRAIN_IMAGE_SIZE[0] * self.TRAIN_IMAGE_SIZE[1])
+        if self.model_dropdown.get() == self.CNN:
+            img = img.reshape(1, 50, 50, 1)
         prediction = self.model.predict([img])
 
-        self.predicted_class.config(text=f"Predicted Class: {self.classes[prediction[0]]}")
+        if self.model_dropdown.get() == self.CNN:
+            index = np.argmax(prediction[0])
+        else:
+            index = prediction[0]
+
+        self.predicted_class.config(text=f"Predicted Class: {self.classes[index]}")
 
         self.clear()
 
@@ -276,6 +300,8 @@ class DrawingClassifier:
         n_training_examples = sum(self.counters)
 
         if n_training_examples > 0:
+            self.disable_element(self.train_btn)
+            self.disable_element(self.predict_btn)
             h_move = math.ceil(self.TRAIN_IMAGE_SIZE[0] / 5)
             v_move = math.ceil(self.TRAIN_IMAGE_SIZE[1] / 5)
             w_zoom = self.TRAIN_IMAGE_SIZE[0] / 2
@@ -294,6 +320,9 @@ class DrawingClassifier:
                         img.save(filepath)
                         counter += 1
                 self.counters[i] = counter
+            self.enable_element(self.train_btn)
+            if self.is_prediction_allowed:
+                self.enable_element(self.predict_btn)
 
     def move_image(self, img, translate):
         return img.rotate(0, translate=(translate), fillcolor=self.BG_COLOR)
