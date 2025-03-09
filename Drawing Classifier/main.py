@@ -153,6 +153,10 @@ class DrawingClassifier:
         self.predicted_class.config(font=("Arial", 20))
         self.predicted_class.grid(row=8, columnspan=3, sticky=tk.NSEW, pady=(0, 10))
 
+        self.save_btn = tk.Button(btn_frame, text="Save model", command=self.save_model)
+        self.save_btn.grid(row=9, columnspan=3, sticky=tk.NSEW)
+        self.disable_element(self.save_btn)
+
         self.root.protocol("WM_DELETE_WINDOW", self.on_delete)
         self.root.attributes("-topmost", True)
         self.root.mainloop()
@@ -197,6 +201,7 @@ class DrawingClassifier:
 
     def train_model(self):
         self.disable_element(self.predict_btn)
+        self.disable_element(self.save_btn)
         X_train, y_train = self.get_training_data()
         if self.model_dropdown.get() == self.CNN:
             self.model.compile(
@@ -212,6 +217,7 @@ class DrawingClassifier:
         if not self.is_prediction_allowed:
             self.is_prediction_allowed = True
         self.enable_element(self.predict_btn)
+        self.enable_element(self.save_btn)
 
     def get_training_data(self):
         img_list = class_list = np.array([])
@@ -248,6 +254,7 @@ class DrawingClassifier:
             self.set_model(self.createCNN())
 
         self.disable_element(self.predict_btn)
+        self.disable_element(self.save_btn)
 
     def set_model(self, model):
         self.model = model
@@ -295,6 +302,9 @@ class DrawingClassifier:
 
     def enable_element(self, element):
         element.config(state=tk.NORMAL)
+
+    def save_model(self):
+        pass
 
     def data_augmentation(self):
         n_training_examples = sum(self.counters)
