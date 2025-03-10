@@ -1,8 +1,9 @@
 import math
 import os
+import pickle
 import random
 import tkinter as tk
-from tkinter import simpledialog, ttk
+from tkinter import filedialog, simpledialog, ttk
 
 import cv2 as cv
 import numpy as np
@@ -304,7 +305,9 @@ class DrawingClassifier:
         element.config(state=tk.NORMAL)
 
     def save_model(self):
-        pass
+        file_path = filedialog.asksaveasfilename(defaultextension="pickle")
+        with open(file_path, "wb") as f:
+            pickle.dump(self.model, f)
 
     def data_augmentation(self):
         n_training_examples = sum(self.counters)
