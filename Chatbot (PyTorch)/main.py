@@ -11,7 +11,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
-# nltk.download("punkt_tab")
+# nltk.download("punkt_tab", quiet=True)
+# nltk.download("punkt", quiet=True)
+# nltk.download("wordnet", quiet=True)
 
 
 class ChatbotModel(nn.Module):
@@ -21,7 +23,7 @@ class ChatbotModel(nn.Module):
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, output_size)
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0, 5)
+        self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
         x = self.relu(self.fc1(x))
@@ -29,3 +31,18 @@ class ChatbotModel(nn.Module):
         x = self.relu(self.fc2(x))
         x = self.dropout(x)
         x = self.fc3(x)
+
+
+class ChatbotAssistant(nn.Module):
+    def __init__(self, intents_path: str, method_mappings: dict = {}):
+        self.model = None
+        self.intents_path = intents_path
+        self.method_mappings = method_mappings
+
+        self.documents = []
+        self.vocabulary = []
+        self.intents = []
+        self.intents_responses = []
+
+        self.X = None
+        self.y = None
