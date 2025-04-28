@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from nltk.stem import WordNetLemmatizer
 from torch.utils.data import DataLoader, TensorDataset
 
 # nltk.download("punkt_tab", quiet=True)
@@ -39,6 +40,8 @@ class ChatbotAssistant(nn.Module):
         self.intents_path = intents_path
         self.method_mappings = method_mappings
 
+        self.lemmatizer = WordNetLemmatizer()
+
         self.documents = []
         self.vocabulary = []
         self.intents = []
@@ -46,3 +49,8 @@ class ChatbotAssistant(nn.Module):
 
         self.X = None
         self.y = None
+
+    def tokenize_and_lemmatize(self, text):
+        words = nltk.word_tokenize(text)
+        words = [self.lemmatizer.lemmatize(word.lower()) for word in words]
+        return words
