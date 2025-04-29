@@ -54,3 +54,6 @@ class ChatbotAssistant(nn.Module):
         words = nltk.word_tokenize(text)
         words = [self.lemmatizer.lemmatize(word.lower()) for word in words]
         return words
+
+    def bag_of_words(self, words, vocabulary):
+        return [1 if word in words else 0 for word in vocabulary]
