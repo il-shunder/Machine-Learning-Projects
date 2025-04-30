@@ -45,7 +45,7 @@ class ChatbotAssistant(nn.Module):
         self.documents = []
         self.vocabulary = []
         self.intents = []
-        self.intents_responses = []
+        self.intents_responses = {}
 
         self.X = None
         self.y = None
@@ -57,3 +57,19 @@ class ChatbotAssistant(nn.Module):
 
     def bag_of_words(self, words, vocabulary):
         return [1 if word in words else 0 for word in vocabulary]
+
+    def parse_intents(self):
+        if os.path.exists(self.intents_path):
+            intents_data = json.loads(open(self.intents_path).read())
+
+            for intent in intents_data["intents"]:
+                if intent["tag"] not in self.intents:
+                    self.intents.append(intent["tag"])
+                    self.intents_responses[intent["tag"]] = intent["responses"]
+
+                for pattern in intent["patterns"]:
+                    pattern_words = self.tokenize_and_lemmatize(pattern)
+                    self.vocabulary.extend(pattern_words)
+                    self.documents.append((pattern_words, intent["tag"]))
+
+            self.vocabulary = sorted(set(self.vocabulary))
