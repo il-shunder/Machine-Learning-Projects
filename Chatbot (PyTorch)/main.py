@@ -73,3 +73,6 @@ class ChatbotAssistant(nn.Module):
                     self.documents.append((pattern_words, intent["tag"]))
 
             self.vocabulary = sorted(set(self.vocabulary))
+
+    def parse_data(self):
+        pass
