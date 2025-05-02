@@ -55,8 +55,8 @@ class ChatbotAssistant(nn.Module):
         words = [self.lemmatizer.lemmatize(word.lower()) for word in words]
         return words
 
-    def bag_of_words(self, words, vocabulary):
-        return [1 if word in words else 0 for word in vocabulary]
+    def bag_of_words(self, words):
+        return [1 if word in words else 0 for word in self.vocabulary]
 
     def parse_intents(self):
         if os.path.exists(self.intents_path):
@@ -74,5 +74,17 @@ class ChatbotAssistant(nn.Module):
 
             self.vocabulary = sorted(set(self.vocabulary))
 
-    def parse_data(self):
-        pass
+    def prepare_data(self):
+        bags = []
+        indices = []
+
+        for document in self.documents:
+            words = document[0]
+            bag = self.bag_of_words(words)
+            intent_index = self.intents.index(document[1])
+
+            bags.append(bag)
+            indices.append(intent_index)
+
+        self.X = np.array(bags)
+        self.y = np.array(indices)
