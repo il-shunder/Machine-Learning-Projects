@@ -117,3 +117,9 @@ class ChatbotAssistant(nn.Module):
                 running_loss += loss
 
             print(f"Epoch: {epoch + 1}, Loss: {running_loss / len(loader):.4f}")
+
+    def save_model(self, model_path, dimensions_path):
+        torch.save(self.model.state_dict(), model_path)
+
+        with open(dimensions_path, "w") as f:
+            json.dump({"input_size": self.X.shape[1], "output_size": len(self.intents)}, f)
