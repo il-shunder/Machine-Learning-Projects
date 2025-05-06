@@ -130,3 +130,6 @@ class ChatbotAssistant(nn.Module):
 
         self.model = ChatbotModel(dimensions["input_size"], dimensions["output_size"])
         self.model.load_state_dict(torch.load(model_path, weights_only=True))
+
+    def process_message(self, message):
+        pass
