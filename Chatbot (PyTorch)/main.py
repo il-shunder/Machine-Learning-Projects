@@ -132,4 +132,14 @@ class ChatbotAssistant(nn.Module):
         self.model.load_state_dict(torch.load(model_path, weights_only=True))
 
     def process_message(self, message):
-        pass
+        words = self.tokenize_and_lemmatize(message)
+        bag = self.bag_of_words(message)
+
+        bag_tensor = torch.tensor([bag], dtype=torch.float32)
+
+        self.model.eval()
+        with torch.no_grad():
+            predictions = self.model(bag_tensor)
+
+            predicted_class_index = torch.argmax(predictions, dim=1).item()
+            prediction_intent = self.intents[predicted_class_index]
