@@ -143,3 +143,7 @@ class ChatbotAssistant(nn.Module):
 
             predicted_class_index = torch.argmax(predictions, dim=1).item()
             prediction_intent = self.intents[predicted_class_index]
+
+            if self.method_mappings:
+                if prediction_intent in self.method_mappings:
+                    self.method_mappings[prediction_intent]()
