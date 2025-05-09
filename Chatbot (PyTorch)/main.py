@@ -147,3 +147,8 @@ class ChatbotAssistant(nn.Module):
             if self.method_mappings:
                 if prediction_intent in self.method_mappings:
                     self.method_mappings[prediction_intent]()
+
+            if self.intents_responses[prediction_intent]:
+                return random.choice(self.intents_responses[prediction_intent])
+            else:
+                return None
