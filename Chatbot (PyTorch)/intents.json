@@ -16,11 +16,6 @@
             "responses": ["You're welcome!", "Anytime!", "My pleasure!", "Glad I could help!"]
         },
         {
-            "tag": "options",
-            "patterns": ["How you could help me?", "What you can do?", "What help you provide?", "How you can be helpful?", "What support is offered"],
-            "responses": ["I can help you with a variety of things, just ask me!"]
-        },
-        {
             "tag": "name",
             "patterns": ["What is your name?", "What should I call you?", "Do you have a name?", "Name", "Who are you?"],
             "responses": ["You can call me Chatbot.", "I'm Chatbot!", "I'm Chatbot, nice to meet you!"]
