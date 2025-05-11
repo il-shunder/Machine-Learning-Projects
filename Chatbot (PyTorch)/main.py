@@ -1,13 +1,12 @@
 import json
 import os
 import random
-from turtle import forward
+from datetime import datetime
 
 import nltk
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 from nltk.stem import WordNetLemmatizer
 from torch.utils.data import DataLoader, TensorDataset
@@ -154,8 +153,13 @@ class ChatbotAssistant(nn.Module):
                 return None
 
 
+def get_time():
+    current_time = datetime.now().strftime("%I:%M %p")
+    return f"It is {current_time}"
+
+
 if __name__ == "__main__":
-    assistant = ChatbotAssistant("intents.json")
+    assistant = ChatbotAssistant("intents.json", method_mappings={"get_time": get_time})
     assistant.parse_intents()
     assistant.prepare_data()
     assistant.train_model(batch_size=8, lr=0.001, epochs=100)

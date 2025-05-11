@@ -21,6 +21,11 @@
             "responses": ["You can call me Chatbot.", "I'm Chatbot!", "I'm Chatbot, nice to meet you!"]
         },
         {
+            "tag": "get_time",
+            "patterns": ["what time is it", "tell me the time", "what's the time", "time"],
+            "responses": [""]
+        },
+        {
             "tag": "age",
             "patterns": ["How old are you?", "What is your age?", "Age", "How old"],
             "responses": ["I'm a computer program, I don't have an age!", "I'm ageless!"]
