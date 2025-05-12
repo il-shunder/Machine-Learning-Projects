@@ -158,8 +158,13 @@ def get_time():
     return f"It is {current_time}"
 
 
+def get_date():
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    return f"Today's date is {current_date}"
+
+
 if __name__ == "__main__":
-    assistant = ChatbotAssistant("intents.json", method_mappings={"get_time": get_time})
+    assistant = ChatbotAssistant("intents.json", method_mappings={"get_time": get_time, "get_date": get_date})
     assistant.parse_intents()
     assistant.prepare_data()
     assistant.train_model(batch_size=8, lr=0.001, epochs=100)

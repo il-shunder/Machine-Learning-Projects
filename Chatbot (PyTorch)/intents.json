@@ -26,6 +26,11 @@
             "responses": [""]
         },
         {
+            "tag": "get_date",
+            "patterns": ["what date is it", "tell me the date", "what's the date", "date"],
+            "responses": [""]
+        },
+        {
             "tag": "age",
             "patterns": ["How old are you?", "What is your age?", "Age", "How old"],
             "responses": ["I'm a computer program, I don't have an age!", "I'm ageless!"]
