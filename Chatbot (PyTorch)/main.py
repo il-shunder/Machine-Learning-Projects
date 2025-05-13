@@ -163,6 +163,11 @@ def get_date():
     return f"Today's date is {current_date}"
 
 
+def get_stock():
+    stocks = ["AAPL", "GOOGL", "MSFT"]
+    return random.choice(stocks)
+
+
 if __name__ == "__main__":
     assistant = ChatbotAssistant("intents.json", method_mappings={"get_time": get_time, "get_date": get_date})
     assistant.parse_intents()
