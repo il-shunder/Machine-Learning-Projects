@@ -31,6 +31,7 @@ class ChatbotModel(nn.Module):
         x = self.relu(self.fc2(x))
         x = self.dropout(x)
         x = self.fc3(x)
+        return x
 
 
 class ChatbotAssistant(nn.Module):
@@ -132,7 +133,7 @@ class ChatbotAssistant(nn.Module):
 
     def process_message(self, message):
         words = self.tokenize_and_lemmatize(message)
-        bag = self.bag_of_words(message)
+        bag = self.bag_of_words(words)
 
         bag_tensor = torch.tensor([bag], dtype=torch.float32)
 
@@ -155,17 +156,17 @@ class ChatbotAssistant(nn.Module):
 
 def get_time():
     current_time = datetime.now().strftime("%I:%M %p")
-    return f"It is {current_time}"
+    print(f"It is {current_time}")
 
 
 def get_date():
     current_date = datetime.now().strftime("%Y-%m-%d")
-    return f"Today's date is {current_date}"
+    print(f"Today's date is {current_date}")
 
 
 def get_stock():
     stocks = ["AAPL", "GOOGL", "MSFT"]
-    return random.choice(stocks)
+    print(random.choice(stocks))
 
 
 if __name__ == "__main__":
