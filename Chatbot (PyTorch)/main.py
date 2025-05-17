@@ -16,6 +16,10 @@ from torch.utils.data import DataLoader, TensorDataset
 # nltk.download("wordnet", quiet=True)
 
 
+MODEL_PATH = "assistant.pth"
+DIMENSIONS_PATH = "dimensions.json"
+
+
 class ChatbotModel(nn.Module):
     def __init__(self, input_size, output_size):
         super().__init__()
@@ -170,17 +174,18 @@ def get_stock():
 
 
 if __name__ == "__main__":
-    # assistant = ChatbotAssistant(
-    #     "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
-    # )
-    # assistant.parse_intents()
-    # assistant.prepare_data()
-    # assistant.train_model(batch_size=8, lr=0.001, epochs=100)
+    if not os.path.exists(MODEL_PATH):
+        assistant = ChatbotAssistant(
+            "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+        )
+        assistant.parse_intents()
+        assistant.prepare_data()
+        assistant.train_model(batch_size=8, lr=0.001, epochs=100)
 
-    # assistant.save_model("assistant.pth", "dimensions.json")
-
-    assistant = ChatbotAssistant(
-        "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
-    )
-    assistant.parse_intents()
-    assistant.load_model("assistant.pth", "dimensions.json")
+        assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
+    else:
+        assistant = ChatbotAssistant(
+            "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+        )
+        assistant.parse_intents()
+        assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
