@@ -174,6 +174,8 @@ def get_stock():
 
 
 if __name__ == "__main__":
+    assistant = None
+
     if not os.path.exists(MODEL_PATH):
         assistant = ChatbotAssistant(
             "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
@@ -189,3 +191,12 @@ if __name__ == "__main__":
         )
         assistant.parse_intents()
         assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
+
+    if assistant:
+        while True:
+            message = input("Enter your message: ")
+
+            if message == "/quit":
+                break
+
+            print(assistant.process_message(message))
