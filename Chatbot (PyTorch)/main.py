@@ -38,7 +38,7 @@ class ChatbotModel(nn.Module):
         return x
 
 
-class ChatbotAssistant(nn.Module):
+class ChatbotAssistant:
     def __init__(self, intents_path: str, method_mappings: dict = {}):
         self.model = None
         self.intents_path = intents_path

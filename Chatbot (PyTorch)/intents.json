@@ -62,8 +62,8 @@
         },
         {
             "tag": "advice",
-            "patterns": ["Can you give me some advice?", "What should I do?", "I need advice", "Can you help me make a decision?", "Advice"],
-            "responses": ["I'm not sure, but I can try to help!", "I'll do my best to help you!", "I'll try to give you some advice!"]
+            "patterns": ["Can you give me some advise?", "What should I do?", "I need advise", "Can you advise me on making a decision?", "Advice"],
+            "responses": ["I'm not sure, but I can try to advise!", "I'll do my best to advise you!", "I'll try to give you some advice!"]
         },
         {
             "tag": "jokes",
@@ -72,7 +72,7 @@
         },
         {
             "tag": "compliment",
-            "patterns": ["You're awesome", "You're amazing", "You're great", "You're the best", "You're fantastic", "You're wonderful", "You're incredible", "You're the greatest", "You're the best chatbot"],
+            "patterns": ["You're awesome", "You are amazing", "You are great", "You're the best", "You're fantastic", "You are wonderful", "You're incredible", "You are the greatest", "You are the best chatbot"],
             "responses": ["Thank you!", "You're too kind!", "You're making me blush!"]
         }
     ] 
