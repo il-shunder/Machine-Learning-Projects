@@ -11,9 +11,9 @@ import torch.optim as optim
 from nltk.stem import WordNetLemmatizer
 from torch.utils.data import DataLoader, TensorDataset
 
-# nltk.download("punkt_tab", quiet=True)
-# nltk.download("punkt", quiet=True)
-# nltk.download("wordnet", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("punkt", quiet=True)
+nltk.download("wordnet", quiet=True)
 
 
 MODEL_PATH = "assistant.pth"
