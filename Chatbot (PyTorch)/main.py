@@ -8,7 +8,11 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from torch.utils.data import DataLoader, TensorDataset
 
 nltk.download("punkt_tab", quiet=True)
