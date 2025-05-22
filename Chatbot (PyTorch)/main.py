@@ -161,6 +161,9 @@ class ChatbotAssistant:
             else:
                 return None
 
+    def text_similarity(self, text1, text2):
+        pass
+
 
 def get_time():
     current_time = datetime.now().strftime("%I:%M %p")
