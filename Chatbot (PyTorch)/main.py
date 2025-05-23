@@ -162,7 +162,8 @@ class ChatbotAssistant:
                 return None
 
     def text_similarity(self, text1, text2):
-        pass
+        tokens1 = self.tokenize_and_lemmatize(text1)
+        tokens2 = self.tokenize_and_lemmatize(text2)
 
 
 def get_time():
