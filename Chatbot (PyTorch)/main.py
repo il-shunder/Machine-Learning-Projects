@@ -165,6 +165,11 @@ class ChatbotAssistant:
         tokens1 = self.tokenize_and_lemmatize(text1)
         tokens2 = self.tokenize_and_lemmatize(text2)
 
+        # Create the TF-IDF vectors
+        vectorizer = TfidfVectorizer()
+        vector1 = vectorizer.fit_transform(tokens1)
+        vector2 = vectorizer.transform(tokens2)
+
 
 def get_time():
     current_time = datetime.now().strftime("%I:%M %p")
