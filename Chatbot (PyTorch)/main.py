@@ -170,6 +170,10 @@ class ChatbotAssistant:
         vector1 = vectorizer.fit_transform(tokens1)
         vector2 = vectorizer.transform(tokens2)
 
+        similarity = cosine_similarity(vector1, vector2)
+
+        return similarity
+
 
 def get_time():
     current_time = datetime.now().strftime("%I:%M %p")
