@@ -161,18 +161,8 @@ class ChatbotAssistant:
             else:
                 return None
 
-    def text_similarity(self, text1, text2):
-        tokens1 = self.tokenize_and_lemmatize(text1)
-        tokens2 = self.tokenize_and_lemmatize(text2)
-
-        # Create the TF-IDF vectors
-        vectorizer = TfidfVectorizer()
-        vector1 = vectorizer.fit_transform(tokens1)
-        vector2 = vectorizer.transform(tokens2)
-
-        similarity = cosine_similarity(vector1, vector2)
-
-        return similarity
+    def get_wordnet_pos(self, tag):
+        return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
 
 def get_time():
