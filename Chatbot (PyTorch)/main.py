@@ -164,6 +164,9 @@ class ChatbotAssistant:
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
+    def get_top_synonyms(self, word, pos=None, topn=3):
+        pass
+
 
 def get_time():
     current_time = datetime.now().strftime("%I:%M %p")
