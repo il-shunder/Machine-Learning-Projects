@@ -165,7 +165,15 @@ class ChatbotAssistant:
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
     def get_top_synonyms(self, word, pos=None, topn=3):
-        pass
+        synsets = wordnet.synsets(word, pos=pos) if pos else wordnet.synsets(word)
+        synonyms = {
+            lemma.name().lower().replace("_", " ")
+            for syn in synsets
+            for lemma in syn.lemmas()
+            if lemma.name().lower().replace("_", " ") != word
+        }
+
+        return [(syn, wordnet.synsets(syn)[0].lemmas()[0].count() if wordnet.synsets(syn) else 0) for syn in synonyms]
 
 
 def get_time():
