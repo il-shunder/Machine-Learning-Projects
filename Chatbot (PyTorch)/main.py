@@ -173,7 +173,8 @@ class ChatbotAssistant:
             if lemma.name().lower().replace("_", " ") != word
         }
 
-        return [(syn, wordnet.synsets(syn)[0].lemmas()[0].count() if wordnet.synsets(syn) else 0) for syn in synonyms]
+        scored = [(syn, wordnet.synsets(syn)[0].lemmas()[0].count() if wordnet.synsets(syn) else 0) for syn in synonyms]
+        return [syn for syn, _ in sorted(scored, key=lambda x: x[1], reverse=True)[:topn]]
 
 
 def get_time():
