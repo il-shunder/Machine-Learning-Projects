@@ -161,6 +161,9 @@ class ChatbotAssistant:
             else:
                 return None
 
+    def text_similarity(self, text):
+        pass
+
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
