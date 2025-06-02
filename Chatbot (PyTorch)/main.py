@@ -165,6 +165,10 @@ class ChatbotAssistant:
         tokens = word_tokenize(text)
         tagged = pos_tag(tokens)
 
+        expanded = set()
+        for word, tag in tagged:
+            wn_pos = self.get_wordnet_pos(tag)
+
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
