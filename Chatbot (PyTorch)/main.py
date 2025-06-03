@@ -168,6 +168,11 @@ class ChatbotAssistant:
         expanded = set()
         for word, tag in tagged:
             wn_pos = self.get_wordnet_pos(tag)
+            lemma = (
+                self.lemmatizer.lemmatize(word.lower(), pos=wn_pos)
+                if wn_pos
+                else self.lemmatizer.lemmatize(word.lower())
+            )
 
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
