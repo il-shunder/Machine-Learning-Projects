@@ -173,6 +173,7 @@ class ChatbotAssistant:
                 if wn_pos
                 else self.lemmatizer.lemmatize(word.lower())
             )
+            expanded.add(lemma)
 
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
