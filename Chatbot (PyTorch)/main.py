@@ -175,6 +175,9 @@ class ChatbotAssistant:
             )
             expanded.add(lemma)
 
+            if wn_pos:
+                expanded.update(self.get_top_synonyms(lemma, pos=wn_pos))
+
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
