@@ -232,6 +232,7 @@ if __name__ == "__main__":
 
     if assistant:
         print(assistant.text_similarity("How are you doing"))
+        print(assistant.tokenize_and_lemmatize("How are you doing"))
         # while True:
         #     message = input("Enter your message: ")
 
