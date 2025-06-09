@@ -163,6 +163,8 @@ class ChatbotAssistant:
 
     def text_similarity(self, text):
         tokens = word_tokenize(text)
+        stop_words = stopwords.words("english")
+        tokens = [token for token in tokens if token not in stop_words]
         tagged = pos_tag(tokens)
 
         expanded = set()
