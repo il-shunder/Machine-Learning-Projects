@@ -18,6 +18,7 @@ nltk.download("punkt_tab", quiet=True)
 nltk.download("punkt", quiet=True)
 nltk.download("wordnet", quiet=True)
 nltk.download("averaged_perceptron_tagger_eng", quiet=True)
+nltk.download("stopwords", quiet=True)
 
 
 MODEL_PATH = "assistant.pth"
