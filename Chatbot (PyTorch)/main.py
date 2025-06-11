@@ -44,10 +44,12 @@ class ChatbotModel(nn.Module):
 
 
 class ChatbotAssistant:
-    def __init__(self, intents_path: str, method_mappings: dict = {}):
+    def __init__(self, intents_path: str, method_mappings: dict = {}, remove_stopwords=False):
         self.model = None
         self.intents_path = intents_path
         self.method_mappings = method_mappings
+
+        self.stop_words = stopwords.words("english") if remove_stopwords else None
 
         self.lemmatizer = WordNetLemmatizer()
 
@@ -164,8 +166,10 @@ class ChatbotAssistant:
 
     def text_similarity(self, text):
         tokens = word_tokenize(text)
-        stop_words = stopwords.words("english")
-        tokens = [token for token in tokens if token not in stop_words]
+
+        if self.stop_words:
+            tokens = [token for token in tokens if token not in self.stop_words]
+
         tagged = pos_tag(tokens)
 
         expanded = set()
