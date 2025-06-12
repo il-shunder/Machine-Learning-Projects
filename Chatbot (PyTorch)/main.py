@@ -44,7 +44,7 @@ class ChatbotModel(nn.Module):
 
 
 class ChatbotAssistant:
-    def __init__(self, intents_path: str, method_mappings: dict = {}, remove_stopwords=False):
+    def __init__(self, intents_path: str, method_mappings: dict = {}, remove_stopwords=False, use_synonyms=False):
         self.model = None
         self.intents_path = intents_path
         self.method_mappings = method_mappings
