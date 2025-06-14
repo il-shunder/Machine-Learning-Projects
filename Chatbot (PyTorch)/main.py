@@ -165,31 +165,6 @@ class ChatbotAssistant:
             else:
                 return None
 
-    def text_similarity(self, text):
-        tokens = word_tokenize(text)
-
-        if self.stop_words:
-            tokens = [token for token in tokens if token not in self.stop_words]
-
-        if self.use_synonyms:
-            tagged = pos_tag(tokens)
-
-            expanded = set()
-            for word, tag in tagged:
-                wn_pos = self.get_wordnet_pos(tag)
-                lemma = (
-                    self.lemmatizer.lemmatize(word.lower(), pos=wn_pos)
-                    if wn_pos
-                    else self.lemmatizer.lemmatize(word.lower())
-                )
-                expanded.add(lemma)
-
-                if wn_pos:
-                    expanded.update(self.get_top_synonyms(lemma, pos=wn_pos))
-
-            return list(expanded)
-        return tokens
-
     def get_wordnet_pos(self, tag):
         return {"J": wordnet.ADJ, "V": wordnet.VERB, "N": wordnet.NOUN, "R": wordnet.ADV}.get(tag[0], None)
 
