@@ -64,8 +64,29 @@ class ChatbotAssistant:
 
     def tokenize_and_lemmatize(self, text):
         words = nltk.word_tokenize(text)
-        words = [self.lemmatizer.lemmatize(word.lower()) for word in words]
-        return words
+        tokens = [self.lemmatizer.lemmatize(word.lower()) for word in words]
+
+        if self.stop_words:
+            tokens = [token for token in tokens if token not in self.stop_words]
+
+        if self.use_synonyms:
+            tagged = pos_tag(tokens)
+
+            expanded = set()
+            for word, tag in tagged:
+                wn_pos = self.get_wordnet_pos(tag)
+                lemma = (
+                    self.lemmatizer.lemmatize(word.lower(), pos=wn_pos)
+                    if wn_pos
+                    else self.lemmatizer.lemmatize(word.lower())
+                )
+                expanded.add(lemma)
+
+                if wn_pos:
+                    expanded.update(self.get_top_synonyms(lemma, pos=wn_pos))
+
+            return list(expanded)
+        return tokens
 
     def bag_of_words(self, words):
         return [1 if word in words else 0 for word in self.vocabulary]
@@ -216,7 +237,7 @@ if __name__ == "__main__":
         assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
 
     if assistant:
-        print(assistant.text_similarity("How are you doing"))
+        # print(assistant.text_similarity("How are you doing"))
         print(assistant.tokenize_and_lemmatize("How are you doing"))
         # while True:
         #     message = input("Enter your message: ")
