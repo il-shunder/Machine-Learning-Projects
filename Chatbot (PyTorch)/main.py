@@ -11,7 +11,6 @@ import torch.optim as optim
 from nltk import pos_tag
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
 from torch.utils.data import DataLoader, TensorDataset
 
 nltk.download("punkt_tab", quiet=True)
