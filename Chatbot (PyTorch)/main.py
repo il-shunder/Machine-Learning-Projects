@@ -239,6 +239,31 @@ if __name__ == "__main__":
     if assistant:
         # print(assistant.text_similarity("How are you doing"))
         print(assistant.tokenize_and_lemmatize("How are you doing"))
+        assistant = ChatbotAssistant(
+            "intents.json",
+            method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock},
+            remove_stopwords=True,
+        )
+        assistant.parse_intents()
+        assistant.prepare_data()
+        print(assistant.tokenize_and_lemmatize("How are you doing"))
+        assistant = ChatbotAssistant(
+            "intents.json",
+            method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock},
+            use_synonyms=True,
+        )
+        assistant.parse_intents()
+        assistant.prepare_data()
+        print(assistant.tokenize_and_lemmatize("How are you doing"))
+        assistant = ChatbotAssistant(
+            "intents.json",
+            method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock},
+            remove_stopwords=True,
+            use_synonyms=True,
+        )
+        assistant.parse_intents()
+        assistant.prepare_data()
+        print(assistant.tokenize_and_lemmatize("How are you doing"))
         # while True:
         #     message = input("Enter your message: ")
 
