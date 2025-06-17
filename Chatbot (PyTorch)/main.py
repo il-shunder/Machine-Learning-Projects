@@ -226,9 +226,9 @@ if __name__ == "__main__":
         )
         assistant.parse_intents()
         assistant.prepare_data()
-        # assistant.train_model(batch_size=8, lr=0.001, epochs=100)
+        assistant.train_model(batch_size=8, lr=0.001, epochs=100)
 
-        # assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
+        assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
     else:
         assistant = ChatbotAssistant(
             "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
@@ -237,37 +237,10 @@ if __name__ == "__main__":
         assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
 
     if assistant:
-        # print(assistant.text_similarity("How are you doing"))
-        print(assistant.tokenize_and_lemmatize("How are you doing"))
-        assistant = ChatbotAssistant(
-            "intents.json",
-            method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock},
-            remove_stopwords=True,
-        )
-        assistant.parse_intents()
-        assistant.prepare_data()
-        print(assistant.tokenize_and_lemmatize("How are you doing"))
-        assistant = ChatbotAssistant(
-            "intents.json",
-            method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock},
-            use_synonyms=True,
-        )
-        assistant.parse_intents()
-        assistant.prepare_data()
-        print(assistant.tokenize_and_lemmatize("How are you doing"))
-        assistant = ChatbotAssistant(
-            "intents.json",
-            method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock},
-            remove_stopwords=True,
-            use_synonyms=True,
-        )
-        assistant.parse_intents()
-        assistant.prepare_data()
-        print(assistant.tokenize_and_lemmatize("How are you doing"))
-        # while True:
-        #     message = input("Enter your message: ")
+        while True:
+            message = input("Enter your message: ")
 
-        #     if message == "/quit":
-        #         break
+            if message == "/quit":
+                break
 
-        #     print(assistant.process_message(message))
+            print(assistant.process_message(message))
