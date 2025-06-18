@@ -238,7 +238,7 @@ if __name__ == "__main__":
 
     if assistant:
         while True:
-            message = input("Enter your message: ")
+            message = input("Enter your message (to quit, enter '/quit'): ")
 
             if message == "/quit":
                 break
