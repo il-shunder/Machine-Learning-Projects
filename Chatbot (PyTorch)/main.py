@@ -218,29 +218,46 @@ def get_stock():
 
 
 if __name__ == "__main__":
-    assistant = None
+    counter = 0
+    st.title("Chatbot")
 
-    if not os.path.exists(MODEL_PATH):
-        assistant = ChatbotAssistant(
-            "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+    while True:
+        counter += 1
+        placeholder = st.empty()
+        message = placeholder.text_input(
+            "Enter your message (to quit, enter '/quit') 👇", placeholder="Enter your message", key=counter
         )
-        assistant.parse_intents()
-        assistant.prepare_data()
-        assistant.train_model(batch_size=8, lr=0.001, epochs=100)
 
-        assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
-    else:
-        assistant = ChatbotAssistant(
-            "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
-        )
-        assistant.parse_intents()
-        assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
-
-    if assistant:
-        while True:
-            message = input("Enter your message (to quit, enter '/quit'): ")
-
+        if message:
             if message == "/quit":
                 break
+            st.write("You entered: ", message)
+            placeholder.empty()
+        else:
+            st.stop()
+    # assistant = None
 
-            print(assistant.process_message(message))
+    # if not os.path.exists(MODEL_PATH):
+    #     assistant = ChatbotAssistant(
+    #         "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+    #     )
+    #     assistant.parse_intents()
+    #     assistant.prepare_data()
+    #     assistant.train_model(batch_size=8, lr=0.001, epochs=100)
+
+    #     assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
+    # else:
+    #     assistant = ChatbotAssistant(
+    #         "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+    #     )
+    #     assistant.parse_intents()
+    #     assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
+
+    # if assistant:
+    #     while True:
+    #         message = input("Enter your message (to quit, enter '/quit'): ")
+
+    #         if message == "/quit":
+    #             break
+
+    #         print(assistant.process_message(message))
