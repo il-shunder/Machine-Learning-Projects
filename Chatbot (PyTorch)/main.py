@@ -6,6 +6,7 @@ from datetime import datetime
 import nltk
 import numpy as np
 import streamlit as st
+import streamlit.components.v1 as components
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -225,7 +226,27 @@ if __name__ == "__main__":
         counter += 1
         placeholder = st.empty()
         message = placeholder.text_input(
-            "Enter your message (to quit, enter '/quit') 👇", placeholder="Enter your message", key=counter
+            "Enter your message (to quit, enter '/quit') 👇",
+            placeholder="Enter your message",
+            key=counter,
+            disabled=False,
+        )
+
+        components.html(
+            f"""
+                <script>
+                    function focusInput() {{
+                        const input = window.parent.document.querySelector('input');
+                        if (input) {{
+                            input.focus();
+                        }} else {{
+                            setTimeout(focusInput, 100);
+                        }}
+                    }}
+                    focusInput();
+                </script>
+            """,
+            height=0,
         )
 
         if message:
