@@ -220,6 +220,15 @@ def get_stock():
 
 if __name__ == "__main__":
     counter = 0
+
+    st.write(
+        """ <style>
+            [class^="st-key-delete-button-"] {
+                /* Your CSS styles here */
+            }
+        </style>""",
+        unsafe_allow_html=True,
+    )
     st.title("Chatbot")
 
     while True:
@@ -247,6 +256,7 @@ if __name__ == "__main__":
                 </script>
             """,
             height=0,
+            width=0,
         )
 
         if message:
