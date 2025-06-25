@@ -226,6 +226,9 @@ if __name__ == "__main__":
             [class^="st-key-delete-button-"] {
                 /* Your CSS styles here */
             }
+            .user-message {
+                margin-left: auto;
+            }
         </style>""",
         unsafe_allow_html=True,
     )
@@ -262,7 +265,13 @@ if __name__ == "__main__":
         if message:
             if message == "/quit":
                 break
-            st.write("You entered: ", message)
+
+            html_str = f"""
+            <div class="user-message">You: {message}</div>
+            <div class="chatbot-message">Chatbot: {message}</div>
+            """
+
+            st.markdown(html_str, unsafe_allow_html=True)
             placeholder.empty()
         else:
             st.stop()
