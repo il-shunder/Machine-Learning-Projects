@@ -275,29 +275,29 @@ if __name__ == "__main__":
             placeholder.empty()
         else:
             st.stop()
-    # assistant = None
+    assistant = None
 
-    # if not os.path.exists(MODEL_PATH):
-    #     assistant = ChatbotAssistant(
-    #         "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
-    #     )
-    #     assistant.parse_intents()
-    #     assistant.prepare_data()
-    #     assistant.train_model(batch_size=8, lr=0.001, epochs=100)
+    if not os.path.exists(MODEL_PATH):
+        assistant = ChatbotAssistant(
+            "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+        )
+        assistant.parse_intents()
+        assistant.prepare_data()
+        assistant.train_model(batch_size=8, lr=0.001, epochs=100)
 
-    #     assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
-    # else:
-    #     assistant = ChatbotAssistant(
-    #         "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
-    #     )
-    #     assistant.parse_intents()
-    #     assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
+        assistant.save_model(MODEL_PATH, DIMENSIONS_PATH)
+    else:
+        assistant = ChatbotAssistant(
+            "intents.json", method_mappings={"get_time": get_time, "get_date": get_date, "get_stock": get_stock}
+        )
+        assistant.parse_intents()
+        assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
 
-    # if assistant:
-    #     while True:
-    #         message = input("Enter your message (to quit, enter '/quit'): ")
+    if assistant:
+        while True:
+            message = input("Enter your message (to quit, enter '/quit'): ")
 
-    #         if message == "/quit":
-    #             break
+            if message == "/quit":
+                break
 
-    #         print(assistant.process_message(message))
+            print(assistant.process_message(message))
