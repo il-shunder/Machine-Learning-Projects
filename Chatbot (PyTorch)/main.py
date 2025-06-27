@@ -219,62 +219,6 @@ def get_stock():
 
 
 if __name__ == "__main__":
-    counter = 0
-
-    st.write(
-        """ <style>
-            [class^="st-key-delete-button-"] {
-                /* Your CSS styles here */
-            }
-            .user-message {
-                margin-left: auto;
-            }
-        </style>""",
-        unsafe_allow_html=True,
-    )
-    st.title("Chatbot")
-
-    while True:
-        counter += 1
-        placeholder = st.empty()
-        message = placeholder.text_input(
-            "Enter your message (to quit, enter '/quit') 👇",
-            placeholder="Enter your message",
-            key=counter,
-            disabled=False,
-        )
-
-        components.html(
-            f"""
-                <script>
-                    function focusInput() {{
-                        const input = window.parent.document.querySelector('input');
-                        if (input) {{
-                            input.focus();
-                        }} else {{
-                            setTimeout(focusInput, 100);
-                        }}
-                    }}
-                    focusInput();
-                </script>
-            """,
-            height=0,
-            width=0,
-        )
-
-        if message:
-            if message == "/quit":
-                break
-
-            html_str = f"""
-            <div class="user-message">You: {message}</div>
-            <div class="chatbot-message">Chatbot: {message}</div>
-            """
-
-            st.markdown(html_str, unsafe_allow_html=True)
-            placeholder.empty()
-        else:
-            st.stop()
     assistant = None
 
     if not os.path.exists(MODEL_PATH):
@@ -294,10 +238,59 @@ if __name__ == "__main__":
         assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
 
     if assistant:
+        counter = 0
+
+        st.write(
+            """ <style>
+                [class^="st-key-delete-button-"] {
+                    /* Your CSS styles here */
+                }
+                .user-message {
+                    margin-left: auto;
+                }
+            </style>""",
+            unsafe_allow_html=True,
+        )
+        st.title("Chatbot")
+
         while True:
-            message = input("Enter your message (to quit, enter '/quit'): ")
+            counter += 1
+            placeholder = st.empty()
+            message = placeholder.text_input(
+                "Enter your message (to quit, enter '/quit') 👇",
+                placeholder="Enter your message",
+                key=counter,
+                disabled=False,
+            )
 
-            if message == "/quit":
-                break
+            components.html(
+                f"""
+                    <script>
+                        function focusInput() {{
+                            const input = window.parent.document.querySelector('input');
+                            if (input) {{
+                                input.focus();
+                            }} else {{
+                                setTimeout(focusInput, 100);
+                            }}
+                        }}
+                        focusInput();
+                    </script>
+                """,
+                height=0,
+                width=0,
+            )
 
-            print(assistant.process_message(message))
+            if message:
+                if message == "/quit":
+                    break
+
+                html_str = f"""
+                <div class="user-message">You: {message}</div>
+                <div class="chatbot-message">Chatbot: {assistant.process_message(message)}</div>
+                """
+
+                st.markdown(html_str, unsafe_allow_html=True)
+                placeholder.empty()
+            else:
+                st.stop()
