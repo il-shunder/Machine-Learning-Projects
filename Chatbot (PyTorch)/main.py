@@ -180,7 +180,7 @@ class ChatbotAssistant:
 
             if self.method_mappings:
                 if prediction_intent in self.method_mappings:
-                    self.method_mappings[prediction_intent]()
+                    return self.method_mappings[prediction_intent]()
 
             if self.intents_responses[prediction_intent]:
                 return random.choice(self.intents_responses[prediction_intent])
@@ -205,17 +205,17 @@ class ChatbotAssistant:
 
 def get_time():
     current_time = datetime.now().strftime("%I:%M %p")
-    print(f"It is {current_time}")
+    return f"It is {current_time}"
 
 
 def get_date():
     current_date = datetime.now().strftime("%Y-%m-%d")
-    print(f"Today's date is {current_date}")
+    return f"Today's date is {current_date}"
 
 
 def get_stock():
     stocks = ["AAPL", "GOOGL", "MSFT"]
-    print(random.choice(stocks))
+    return random.choice(stocks)
 
 
 if __name__ == "__main__":
