@@ -7,6 +7,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 MODEL_PATH = "assistant.pth"
+STYLE_PATH = "style.css"
 DIMENSIONS_PATH = "dimensions.json"
 
 if __name__ == "__main__":
@@ -22,8 +23,6 @@ if __name__ == "__main__":
     def get_stock():
         stocks = ["AAPL", "GOOGL", "MSFT"]
         return random.choice(stocks)
-
-    assistant = None
 
     if not os.path.exists(MODEL_PATH):
         assistant = chatbot_assistant.ChatbotAssistant(
@@ -44,17 +43,10 @@ if __name__ == "__main__":
     if assistant:
         counter = 0
 
-        st.write(
-            """ <style>
-                [class^="st-key-delete-button-"] {
-                    /* Your CSS styles here */
-                }
-                .user-message {
-                    margin-left: auto;
-                }
-            </style>""",
-            unsafe_allow_html=True,
-        )
+        with open(STYLE_PATH) as f:
+            css = f.read()
+
+        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
         st.title("Chatbot")
 
         # while True:
