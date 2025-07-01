@@ -41,7 +41,7 @@ if __name__ == "__main__":
         assistant.load_model(MODEL_PATH, DIMENSIONS_PATH)
 
     if assistant:
-        counter = 0
+        # counter = 0
 
         with open(STYLE_PATH) as f:
             css = f.read()
@@ -49,45 +49,26 @@ if __name__ == "__main__":
         st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
         st.title("Chatbot")
 
-        # while True:
-        counter += 1
-        placeholder = st.empty()
-        message = placeholder.text_input(
-            "Enter your message (to quit, enter '/quit') 👇",
-            placeholder="Enter your message",
-            key=counter,
-            disabled=False,
-        )
+        html = f"<div id='messages'></div>"
+        st.markdown(html, unsafe_allow_html=True)
 
-        components.html(
-            f"""
-                <script>
-                    console.log({counter});
-                    function focusInput() {{
-                        const input = window.parent.document.querySelector('input');
-                        if (input) {{
-                            input.focus();
-                        }} else {{
-                            setTimeout(focusInput, 100);
-                        }}
-                    }}
-                    focusInput();
-                </script>
-            """,
-            height=0,
-            width=0,
-        )
+        with st.form("chatbot"):
+            message = st.text_input(
+                "Enter your message (to quit, enter '/quit') 👇",
+                placeholder="Enter your message",
+                key="chatbot_input",
+                disabled=False,
+            )
+            st.form_submit_button("Send")
 
         if message:
             # if message == "/quit":
             #     break
 
-            html_str = f"""
-            <div class="user-message">You: {message}</div>
-            <div class="chatbot-message">Chatbot: {assistant.process_message(message)}</div>
+            html = f"""
+                <div class="user-message">You: {message}</div>
+                <div class="chatbot-message">Chatbot: {assistant.process_message(message)}</div>
             """
-
-            st.markdown(html_str, unsafe_allow_html=True)
-            placeholder.empty()
+            st.markdown(html, unsafe_allow_html=True)
         else:
             st.stop()
