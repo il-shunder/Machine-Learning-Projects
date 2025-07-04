@@ -4,6 +4,7 @@ from datetime import datetime
 
 import chatbot_assistant
 import streamlit as st
+from streamlit.components.v1 import html
 
 MODEL_PATH = "assistant.pth"
 STYLE_PATH = "style.css"
@@ -43,16 +44,17 @@ if __name__ == "__main__":
     if assistant:
         with open(STYLE_PATH) as f:
             css = f.read()
-        with open(SCRIPT_PATH) as f:
-            js = f.read()
+        # with open(SCRIPT_PATH) as f:
+        #     js = f.read()
 
         st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-        st.markdown(f"<script>{js}</script>", unsafe_allow_html=True)
+        html(f"<script>alert('heyllo');</script>")
+        # st.markdown(f"<script>alert('heyllo');</script>", unsafe_allow_html=True)
 
         st.title("Chatbot")
 
-        html = f"<div id='messages'></div>"
-        st.markdown(html, unsafe_allow_html=True)
+        html1 = f"<div id='messages'></div>"
+        st.markdown(html1, unsafe_allow_html=True)
 
         with st.form("chatbot123", clear_on_submit=True, border=False):
             message = st.text_input(
@@ -71,7 +73,7 @@ if __name__ == "__main__":
             #     <div class="user-message">You: {message}</div>
             #     <div class="chatbot-message">Chatbot: {assistant.process_message(message)}</div>
             # """
-            html = f"<script type='text/javascript'>alert('{message}')</script>"
-            st.html(html)
+            html1 = f"<script type='text/javascript'>alert('{message}')</script>"
+            st.html(html1)
         else:
             st.stop()
