@@ -44,19 +44,16 @@ if __name__ == "__main__":
     if assistant:
         with open(STYLE_PATH) as f:
             css = f.read()
-        # with open(SCRIPT_PATH) as f:
-        #     js = f.read()
+        with open(SCRIPT_PATH) as f:
+            js = f.read()
 
         st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-        html(f"<script>alert('heyllo');</script>")
-        # st.markdown(f"<script>alert('heyllo');</script>", unsafe_allow_html=True)
+        html(f"<script>{js}</script>")
 
         st.title("Chatbot")
+        st.markdown("<div id='messages'></div>", unsafe_allow_html=True)
 
-        html1 = f"<div id='messages'></div>"
-        st.markdown(html1, unsafe_allow_html=True)
-
-        with st.form("chatbot123", clear_on_submit=True, border=False):
+        with st.form("chatbot", clear_on_submit=True, border=False):
             message = st.text_input(
                 "Enter your message (to quit, enter '/quit') 👇",
                 placeholder="Enter your message",
@@ -69,11 +66,8 @@ if __name__ == "__main__":
             # if message == "/quit":
             #     break
 
-            # html = f"""
-            #     <div class="user-message">You: {message}</div>
-            #     <div class="chatbot-message">Chatbot: {assistant.process_message(message)}</div>
-            # """
-            html1 = f"<script type='text/javascript'>alert('{message}')</script>"
-            st.html(html1)
+            html(
+                f"<script>window.parent.document.displayMessages('{message}', '{assistant.process_message(message)}');</script>"
+            )
         else:
             st.stop()
