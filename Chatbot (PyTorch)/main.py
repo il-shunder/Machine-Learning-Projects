@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
         with st.form("chatbot", clear_on_submit=True, border=False):
             message = st.text_input(
-                "Enter your message (to quit, enter '/quit') 👇",
+                "",
                 placeholder="Enter your message",
                 key="chatbot_input",
                 disabled=False,
@@ -67,7 +67,7 @@ if __name__ == "__main__":
             #     break
 
             html(
-                f"<script>window.parent.document.displayMessages('{message}', '{assistant.process_message(message)}');</script>"
+                f'<script>window.parent.document.displayMessages("{message}", "{assistant.process_message(message)}");</script>'
             )
         else:
             st.stop()
