@@ -51,6 +51,10 @@ if __name__ == "__main__":
         html(f"<script>{js}</script>")
 
         st.title("Chatbot")
+        st.markdown(
+            "Enter the message to start communicating with the Chatbot. Your messages are displayed on the right, and Chatbot's answers are on the left:",
+            unsafe_allow_html=True,
+        )
         st.markdown("<div id='messages'></div>", unsafe_allow_html=True)
 
         with st.form("chatbot", clear_on_submit=True, border=False):
