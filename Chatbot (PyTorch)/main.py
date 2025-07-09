@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
         st.title("Chatbot")
         st.markdown(
-            "Enter the message to start communicating with the Chatbot. Your messages are displayed on the right, and Chatbot's answers are on the left:",
+            "Enter the message to start communicating with the Chatbot. Your messages are displayed on the right, and the Chatbot's answers are on the left. If you want to quit, enter '/quit'",
             unsafe_allow_html=True,
         )
         st.markdown("<div id='messages'></div>", unsafe_allow_html=True)
