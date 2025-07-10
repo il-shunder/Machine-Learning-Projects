@@ -3,6 +3,7 @@ import random
 from datetime import datetime
 
 import chatbot_assistant
+import psutil
 import streamlit as st
 from streamlit.components.v1 import html
 
@@ -67,8 +68,10 @@ if __name__ == "__main__":
             submit = st.form_submit_button("Send")
 
         if submit and message:
-            # if message == "/quit":
-            #     break
+            if message == "/quit":
+                pid = os.getpid()
+                p = psutil.Process(pid)
+                p.terminate()
 
             html(
                 f'<script>window.parent.document.displayMessages("{message}", "{assistant.process_message(message)}");</script>'
