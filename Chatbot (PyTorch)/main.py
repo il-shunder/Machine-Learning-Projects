@@ -67,12 +67,9 @@ if __name__ == "__main__":
             )
             submit = st.form_submit_button("Send")
 
-        if submit and message:
-            if message == "/quit":
-                pid = os.getpid()
-                p = psutil.Process(pid)
-                p.terminate()
+        quit_app = st.button("Quit App")
 
+        if submit and message:
             html(
                 f'<script>window.parent.document.displayMessages("{message}", "{assistant.process_message(message)}");</script>'
             )
