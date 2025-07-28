@@ -9,7 +9,7 @@ from streamlit.components.v1 import html
 
 MODEL_PATH = "assistant.pth"
 STYLE_PATH = "css/style.css"
-SCRIPT_PATH = "script.js"
+SCRIPT_PATH = "js/script.js"
 DIMENSIONS_PATH = "dimensions.json"
 
 if __name__ == "__main__":
