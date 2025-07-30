@@ -2,7 +2,7 @@ import os
 import random
 from datetime import datetime
 
-import chatbot_assistant
+import chatbot.chatbot_assistant
 import psutil
 import streamlit as st
 from streamlit.components.v1 import html
