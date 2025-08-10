@@ -2,9 +2,9 @@ import os
 import random
 from datetime import datetime
 
+import chatbot.chatbot_assistant as chatbot_assistant
 import psutil
 import streamlit as st
-from chatbot import chatbot_assistant
 from streamlit.components.v1 import html
 
 MODEL_PATH = "assistant.pth"
