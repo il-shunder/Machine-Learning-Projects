@@ -2,7 +2,7 @@ import json
 import os
 import random
 
-import chatbot_model
+import chatbot.chatbot_model as chatbot_model
 import nltk
 import numpy as np
 import torch
