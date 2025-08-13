@@ -7,5 +7,11 @@ To start the app, run the following command:
 ## Requirements
 
 ```
-  requirements.txt
+    requirements.txt
+```
+
+## Intents
+
+```
+    intents.json
 ```
