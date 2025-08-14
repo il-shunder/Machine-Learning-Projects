@@ -15,3 +15,12 @@ To start the app, run the following command:
 ```
     intents.json
 ```
+
+## Chatbot
+
+```
+    chatbot/chatbot_assistant.py
+```
+```
+    chatbot/chatbot_model.py
+```
