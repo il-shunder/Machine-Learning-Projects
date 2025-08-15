@@ -24,3 +24,9 @@ To start the app, run the following command:
 ```
     chatbot/chatbot_model.py
 ```
+
+## CSS
+
+```
+    css/style.css
+```
