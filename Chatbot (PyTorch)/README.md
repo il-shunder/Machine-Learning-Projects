@@ -30,3 +30,9 @@ To start the app, run the following command:
 ```
     css/style.css
 ```
+
+## JavaScript
+
+```
+    js/script.js
+```
