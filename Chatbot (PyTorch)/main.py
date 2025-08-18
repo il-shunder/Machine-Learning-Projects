@@ -60,10 +60,11 @@ if __name__ == "__main__":
 
         with st.form("chatbot", clear_on_submit=True, border=False):
             message = st.text_input(
-                "",
+                "Input field",
                 placeholder="Enter your message",
                 key="chatbot_input",
                 disabled=False,
+                label_visibility="hidden",
             )
             submit = st.form_submit_button("Send")
 
